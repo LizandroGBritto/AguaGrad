@@ -4,7 +4,7 @@ import Form from '../components/Form';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import useForm from '../hooks/useForm';
-import { Link, useNavigate, useParams } from 'react-router-dom';    
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button } from "flowbite-react";
 
 
@@ -16,20 +16,20 @@ const UpdateClient = () => {
         clientFullName: 'cargando...',
         clientPhoneNumber: 'cargando...',
         clientDirection: 'cargando...'
-    };    const navigate = useNavigate();
+    }; const navigate = useNavigate();
 
     const { values: client, handleChange, setValues } = useForm(initialValues);
     const [error, setError] = useState('');
 
     useEffect(() => {
-        axios.get(`http://localhost:8000/api/client/${id}`)
+        axios.get(`http://localhost:8000/api/client/${id}`, { withCredentials: true })
             .then(res => {
                 console.log(res);
                 setValues({
                     clientFullName: res.data.client.clientFullName,
                     clientPhoneNumber: res.data.client.clientPhoneNumber,
                     clientDirection: res.data.client.clientDirection
-            });
+                });
             })
             .catch(err => {
                 console.log(err);
@@ -39,7 +39,7 @@ const UpdateClient = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.put(`http://localhost:8000/api/client/${id}`, client)
+        axios.put(`http://localhost:8000/api/client/${id}`, client, { withCredentials: true })
             .then(res => {
                 console.log(res);
                 setError('');
@@ -48,7 +48,7 @@ const UpdateClient = () => {
                     title: 'Excelente',
                     text: 'Actualizaste un cliente!',
                 });
-                navigate('/admin');
+                navigate('/admin/panel');
             })
             .catch(err => {
                 console.log(err);
@@ -61,7 +61,7 @@ const UpdateClient = () => {
             <div className="buyCard">
                 <div className=" flex ">
                     <h2 className="text-base font-semibold leading-7 text-gray-900 mr-10">Agregar Cliente</h2>
-                  <Button as={Link} to="/admin" className='ml-10' color="failure">Cancelar</Button>
+                    <Button as={Link} to="/admin/panel" className='ml-10' color="failure">Cancelar</Button>
 
                 </div>
                 <Form handleSubmit={handleSubmit} error={error} client={client} handleChange={handleChange} />

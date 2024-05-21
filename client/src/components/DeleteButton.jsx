@@ -15,7 +15,7 @@ const DeleteButton = ({clientId, onDelete}) => {
 
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        axios.delete(`http://localhost:8000/api/client/${clientId}`)
+                        axios.delete(`http://localhost:8000/api/client/${clientId}`, {withCredentials: true})
                             .then(res => {
                                 console.log(res);
                                 onDelete(clientId);

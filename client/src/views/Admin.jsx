@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import DeleteButton from '../components/DeleteButton';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { jsPDF } from 'jspdf';
-import { Navbar, NavbarBrand, NavbarCollapse, NavbarLink, NavbarToggle } from "flowbite-react";
+import { Navbar, NavbarCollapse, NavbarLink, NavbarToggle } from "flowbite-react";
 import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "flowbite-react";
 
 
@@ -16,7 +16,7 @@ const Admin = ({ clients, setClients }) => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        axios.get('http://localhost:8000/api/client')
+        axios.get('http://localhost:8000/api/client', { withCredentials: true })
             .then(res => {
                 setClients(res.data.clients)
                 setIsLoading(false)
@@ -50,7 +50,7 @@ const Admin = ({ clients, setClients }) => {
         <div>
             <nav className="navbar">
                 <Navbar fluid rounded>
-                        <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Panel de Administracion</span>
+                    <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Panel de Administracion</span>
                     <NavbarToggle />
                     <NavbarCollapse>
                         <NavbarLink as={Link} to="/new">

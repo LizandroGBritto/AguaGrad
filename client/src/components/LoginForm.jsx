@@ -1,16 +1,39 @@
-import { Button, Checkbox, Label, TextInput } from "flowbite-react";
+import { Button } from "flowbite-react";
 import * as Yup from 'yup';
-import { Formik } from 'formik'; 
+import { ErrorMessage, Formik, Field, Form } from 'formik';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import UserContext from '../context/UserContext';
 
-const LoginForm = () => {
+const LoginForm = ({ formType }) => {
+    const { setUser } = useContext(UserContext);
+    const navigate = useNavigate();
 
+    const handleSubmit = (values, { setSubmitting, setErrors, resetForm }) => {
+        if (formType === 'Registrarse') {
+            registerUser(values, setErrors);
+        } else {
+            loginUser(values, setErrors);
+        }
+        setSubmitting(false);
+        resetForm();
+    };
 
-    const handleSubmit = (values, {setSubmitting, resetForm, setErrors}) => { 
-        loginUser(values, setErrors);
-    }
-    const navigate = useNavigate(); 
+    const registerUser = async (values, setErrors) => {
+        try {
+            await axios.post(
+                "http://localhost:8000/api/auth/register",
+                values,
+                { withCredentials: true }
+            );
+            loginUser(values, setErrors);
+        } catch (err) {
+            console.log("Error: ", err.response);
+            setErrors({ general: err.response?.data?.msg || 'Error desconocido' });
+        }
+    };
+
     const loginUser = async (values, setErrors) => {
         try {
             let res = await axios.post(
@@ -20,51 +43,59 @@ const LoginForm = () => {
             );
             setUser(res.data.user);
             localStorage.setItem("user", JSON.stringify(res.data.user));
-            navigate("/admin");
+            navigate("/admin/panel");
         } catch (err) {
             console.log("Error: ", err.response);
-            setErrors({general: err.response.data.msg});
+            setErrors({ general: err.response?.data?.msg || 'Error desconocido' });
         }
     };
 
     const validationSchema = Yup.object().shape({
-        email: Yup.string().required(),
-        password: Yup.string().min(8).required(),
+        userName: Yup.string().required("Usuario es requerido"),
+        password: Yup.string().min(8, 'La contraseña debe tener al menos 8 caracteres').required("Contraseña es requerida"),
+        ...(formType === 'Registrarse' ? {
+            confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Las contraseñas deben coincidir').required("Confirme la contraseña")
+        } : {})
     });
-
 
     return (
         <Formik
             initialValues={{
                 userName: '',
                 password: '',
+                ...(formType === 'Registrarse' ? { confirmPassword: '' } : {})
             }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
         >
-            {({isSubmitting, errors}) => (
-                <form className="flex max-w-md flex-col gap-4">
-                    <div>
-                        <div className="mb-2 block">
-                            <Label htmlFor="email1" value="Nombre de Usuario" />
+            {({ isSubmitting, errors }) => (
+                <>
+                    <Form>
+                        <h2 className="text-pretty font-semibold text-gray-600 mb-3">{formType === "Iniciar Sesion" ? "Iniciar Sesion" : "Registrarse"}</h2>
+                        {errors?.general && <div className="text-red-600">{errors.general}</div>}
+
+                        <div className="mb-5">
+                            <Field type="text" name='userName' placeholder='Nombre de Usuario' />
+                            <ErrorMessage name='userName' component='div' className="text-red-600" />
                         </div>
-                        <TextInput id="email1" type="text" placeholder="Usuario" required />
-                    </div>
-                    <div>
-                        <div className="mb-2 block">
-                            <Label htmlFor="password1" value="Contraseña" />
+
+                        <div className="mb-5">
+                            <Field type="password" name='password' placeholder='Contraseña' />
+                            <ErrorMessage name='password' component='div' className="text-red-600" />
                         </div>
-                        <TextInput id="password1" type="password" required />
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Checkbox id="remember" />
-                        <Label htmlFor="remember">Remember me</Label>
-                    </div>
-                    <Button type="submit" disabled= {isSubmitting}>Submit</Button>
-                </form>
+                        {formType === 'Registrarse' && (
+                            <div className="mb-5">
+                                <Field type="password" name='confirmPassword' placeholder='Confirmar Contraseña' />
+                                <ErrorMessage name='confirmPassword' component='div' className="text-red-600" />
+                            </div>
+                        )}
+
+                        <Button type="submit" disabled={isSubmitting}>Enviar</Button>
+                    </Form>
+                </>
             )}
         </Formik>
     );
-}
+};
 
-export default LoginForm
+export default LoginForm;

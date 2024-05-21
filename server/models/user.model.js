@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
-//const uniqueValidator = require('mongoose-unique-validator');
+const uniqueValidator = require('mongoose-unique-validator');
 
 const UserSchema = new mongoose.Schema({
     userName: {
@@ -14,6 +14,17 @@ const UserSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
+UserSchema.virtual('confirmPassword')
+    .get(() => this._confirmPassword)
+    .set(value => this._confirmPassword = value);
+
+UserSchema.pre('validate', function (next) {
+    if (this.password !== this.confirmPassword) {
+        this.invalidate('confirmPassword', 'Las contraseñas deben coincidir');
+    }
+    next();
+});
+
 UserSchema.pre('save', function (next) {
     bcrypt.hash(this.password, 10)
         .then(hash => {
@@ -22,25 +33,9 @@ UserSchema.pre('save', function (next) {
         });
 });
 
-// Commenting out the code
-/*
-UserSchema.virtual('confirmPassword')
-.get( () => this._confirmPassword )
-.set( value => this._confirmPassword = value );
 
-UserSchema.pre('validate', function(next) {
-    if (this.password !== this.confirmPassword) {
-      this.invalidate('confirmPassword', 'Password must match confirm password');
-    }
-    next();
-});
+UserSchema.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique.' });
 
-// near the top is a good place to group our imports
-// this should go after 
-
-
-UserSchema.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique.'});
-*/
 
 
 module.exports.UserModel = mongoose.model('User', UserSchema);

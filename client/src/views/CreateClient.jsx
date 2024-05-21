@@ -29,7 +29,7 @@ const CreateClient = ({ updateClient }) => {
                     title: 'Excelente',
                     text: 'Agregaste un nuevo cliente!',
                 });
-                navigate('/admin');
+                navigate('/admin/panel');
             })
             .catch(err => {
                 console.log(err);
@@ -40,7 +40,7 @@ const CreateClient = ({ updateClient }) => {
     return (
         <div className='buyContainer' id='pedido'>
             <div className="buyCard">
-                <h1>Agregar Cliente <Link to="/admin" className="btn btn-danger ">Cancelar</Link> </h1>
+                <h1>Agregar Cliente <Link to="/admin/panel" className="btn btn-danger ">Cancelar</Link> </h1>
                 <Form handleSubmit={handleSubmit} error={error} client={client} handleChange={handleChange} />
             </div>
         </div>
