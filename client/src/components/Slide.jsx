@@ -9,7 +9,7 @@ const Slide = () => {
             <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-2 lg:items-start lg:gap-y-10">
                 <div className="lg:col-span-2 lg:col-start-1 lg:row-start-1 lg:mx-auto lg:grid lg:w-full lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8">
                     <div className="lg:pr-4">
-                        <p className="text-base font-semibold leading-7 text-indigo-600">Quienes somos?</p>
+                        <p className="text-base font-semibold leading-7 text-indigo-600">¿Quienes somos?</p>
                         <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Agua mineral GRAD</h1>
                         <p className="mt-3 text-lg text-gray-500">Somos una Empresa Familiar de origen Encarnaceno!! ✨<br/> Nuestra Misión y Visión 🎯🔜💙<br/> 💧Dar al cliente un agua de calidad y a un valor accesible. Ya sea que lo consuma por salud o porque confía en nosotros, un grupo que busca seguir creciendo y mejorando;<br/> 💧Ser la empresa de distribución de agua mineral, en que la gente deposite su confianza. Con productos de calidad que otorguen al cliente satisfacción al consumirlo… refrescantemente natural;<br/> Pedidos al (0975) 655 - 014 📲 te lo entregamos en la puerta de tu casa 🏡 🚚💨</p>
                     </div>
